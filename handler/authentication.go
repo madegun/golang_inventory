@@ -78,9 +78,10 @@ func Register(c *fiber.Ctx) error {
 	database.DB.First(&user, "email = ?", emailForm)
 
 	if user.Email != "" {
-		c.JSON(fiber.Map{"error": 1, "message": "This email is already registered!"})
-		return c.SendStatus(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{"error": 1, "message": "This email is already registered!"})
+		//return c.SendStatus(fiber.StatusUnauthorized)
 	}
+	//TODO add error handling
 	database.DB.Create(&database.User{
 		FirstName:   firstNameForm,
 		LastName:    lastNameForm,

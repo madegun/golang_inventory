@@ -21,5 +21,8 @@ func main() {
 		SigningKey: []byte("secret"),
 	}))
 
+	app.Get("/api/device/:id", handler.GetDevice)
+	app.Post("/api/device/:id", handler.SetDevice)
+
 	app.Listen(":3000")
 }
