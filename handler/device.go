@@ -1,9 +1,30 @@
 package handler
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/xyn/golang_inventory/database"
 )
+
+func GetDevices(c *fiber.Ctx) error {
+	var device database.Device
+	result := database.DB.Preload("Donator").Preload("Delivery").Find(&device)
+	log.Println(result.RowsAffected)
+	return c.JSON(fiber.Map{
+		"DevID":       device.DevID,
+		"DevModel":    device.DevModel,
+		"Accessories": device.Accessories,
+		"Condition":   device.Condition,
+		"Donator":     device.Donator,
+		"Specs":       device.Specs,
+		"WorkCond":    device.WorkCond,
+		"Hostname":    device.Hostname,
+		"RemoteName":  device.RemoteName,
+		"Delivery":    device.Delivery,
+		"Remarks":     device.Remarks,
+	})
+}
 
 func GetDevice(c *fiber.Ctx) error {
 	var device database.Device

@@ -22,6 +22,7 @@ func main() {
 	}))
 
 	app.Get("/api/device/:id", handler.GetDevice)
+	app.Get("/api/devices", handler.GetDevices)
 	app.Post("/api/device/:id", handler.SetDevice)
 
 	app.Listen(":3000")

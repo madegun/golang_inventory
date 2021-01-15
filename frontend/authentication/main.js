@@ -53,7 +53,9 @@ document.getElementById("login_form").addEventListener("submit", event => {
 				document.body.append(error_alert)
 			}
 		} else {
+			
 			setCookie("token", parsed_data.token, 7)
+			window.location.replace("/dashboard")
 		}
 	})
 	event.preventDefault();
