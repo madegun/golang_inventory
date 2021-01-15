@@ -38,11 +38,11 @@ func Login(c *fiber.Ctx) error {
 	database.DB.First(&user, "email = ?", emailForm)
 
 	if user.Email == "" {
-		c.JSON(fiber.Map{"error": 1, "message": "No such email found!"})
-		return c.SendStatus(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{"error": 1, "message": "No such email found!"})
+		//return c.SendStatus(fiber.StatusUnauthorized)
 	} else if !comparePasswords(user.Password, passwordForm) {
-		c.JSON(fiber.Map{"error": 1, "message": "Password does not match!"})
-		return c.SendStatus(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{"error": 1, "message": "Password does not match!"})
+		//return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
 	// Create token
@@ -54,7 +54,9 @@ func Login(c *fiber.Ctx) error {
 	claims["lastName"] = user.LastName
 	claims["email"] = user.Email
 	claims["accountType"] = user.AccountType
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	//have token expire after 1 week
+	claims["exp"] = time.Now().Add(time.Hour * 168).Unix()
+	log.Println(claims["exp"])
 
 	// Generate encoded token and send it as response.
 	t, err := token.SignedString([]byte("secret"))
