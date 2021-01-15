@@ -7,13 +7,25 @@ import (
 
 func GetDevice(c *fiber.Ctx) error {
 	var device database.Device
-	database.DB.First(&device, "DevID = ?", c.Params("id"))
-	return c.JSON(fiber.Map{"error": 0, "message": "N/A"})
+	database.DB.Preload("Donator").Preload("Delivery").First(&device, "dev_id = ?", c.Params("id"))
+	return c.JSON(fiber.Map{
+		"DevID":       device.DevID,
+		"DevModel":    device.DevModel,
+		"Accessories": device.Accessories,
+		"Condition":   device.Condition,
+		"Donator":     device.Donator,
+		"Specs":       device.Specs,
+		"WorkCond":    device.WorkCond,
+		"Hostname":    device.Hostname,
+		"RemoteName":  device.RemoteName,
+		"Delivery":    device.Delivery,
+		"Remarks":     device.Remarks,
+	})
 }
 
 func SetDevice(c *fiber.Ctx) error {
 	var device database.Device
-	database.DB.First(&device, "DevID = ?", c.Params("id"))
+	database.DB.First(&device, "dev_id = ?", c.Params("id"))
 	if device.DevID != "" {
 		return c.JSON(fiber.Map{"error": 1, "message": "This ID is already registered!"})
 	}
