@@ -26,6 +26,9 @@ func main() {
 }
 
 func root(c *fiber.Ctx) error {
+	if c.Get("Authorization") != "" {
+		c.Redirect("/dashboard")
+	}
 	return c.SendString("*should do stuff yet but it doesnt lol*")
 }
 
