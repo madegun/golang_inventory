@@ -45,7 +45,7 @@ type Device struct {
 	DevID       string   `json:"devid"`
 	DevModel    string   `json:"devmodel"`
 	Accessories string   `json:"accessories"`
-	Condition   string   `json:"aspect"`
+	Condition   string   `json:"condition"`
 	Donator     Donator  `json:"donator"`
 	Specs       string   `json:"specs"`
 	WorkCond    int      `json:"workcond"`

@@ -38,11 +38,15 @@ func Login(c *fiber.Ctx) error {
 	database.DB.First(&user, "email = ?", emailForm)
 
 	if user.Email == "" {
-		return c.JSON(fiber.Map{"error": 1, "message": "No such email found!"})
-		//return c.SendStatus(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"error":   1,
+			"message": "No such email found!",
+		})
 	} else if !comparePasswords(user.Password, passwordForm) {
-		return c.JSON(fiber.Map{"error": 1, "message": "Password does not match!"})
-		//return c.SendStatus(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"error":   1,
+			"message": "Password does not match!",
+		})
 	}
 
 	// Create token
@@ -68,26 +72,32 @@ func Login(c *fiber.Ctx) error {
 }
 
 func Register(c *fiber.Ctx) error {
-	firstNameForm := c.FormValue("firstName")
-	lastNameForm := c.FormValue("lastName")
-	emailForm := c.FormValue("email")
-	passwordForm := c.FormValue("password")
 	accountType, _ := strconv.Atoi(c.FormValue("accountType"))
 
 	var user database.User
-	database.DB.First(&user, "email = ?", emailForm)
+	database.DB.First(&user, "email = ?", c.FormValue("email"))
 
 	if user.Email != "" {
-		return c.JSON(fiber.Map{"error": 1, "message": "This email is already registered!"})
-		//return c.SendStatus(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"error":   1,
+			"message": "This email is already registered!",
+		})
 	}
-	//TODO add error handling
-	database.DB.Create(&database.User{
-		FirstName:   firstNameForm,
-		LastName:    lastNameForm,
-		Email:       emailForm,
+	result := database.DB.Create(&database.User{
+		FirstName:   c.FormValue("firstName"),
+		LastName:    c.FormValue("lastName"),
+		Email:       c.FormValue("email"),
 		AccountType: accountType,
-		Password:    getHash(passwordForm),
+		Password:    getHash(c.FormValue("password")),
 	})
-	return c.JSON(fiber.Map{"error": 0, "message": "Account created successfully!"})
+	if result.Error != nil {
+		return c.JSON(fiber.Map{
+			"error":   1,
+			"message": "There was an error creating your account, please try again!",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"error":   0,
+		"message": "Account created successfully!",
+	})
 }

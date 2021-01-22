@@ -13,8 +13,18 @@ func main() {
 
 	app.Post("/api/login", handler.Login)
 	app.Post("/api/register", handler.Register)
+
+	app.Static("/assets", "./frontend/assets")
+
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		return ctx.SendFile("./frontend/authentication/index.html")
+	})
+
+	app.Get("/dashboard/device/:id", func(ctx *fiber.Ctx) error {
+		return ctx.SendFile("./frontend/dashboard/device.html")
+	})
+
 	app.Static("/dashboard", "./frontend/dashboard")
-	app.Static("/", "./frontend/authentication")
 
 	// JWT Middleware
 	app.Use(jwtware.New(jwtware.Config{
@@ -24,6 +34,7 @@ func main() {
 	app.Get("/api/device/:id", handler.GetDevice)
 	app.Get("/api/devices", handler.GetDevices)
 	app.Post("/api/device/:id", handler.SetDevice)
+	app.Post("/api/device/modify/:id", handler.ModifyDevice)
 
 	app.Listen(":3000")
 }
